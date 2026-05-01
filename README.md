@@ -1,6 +1,8 @@
 # hanami-to-rails
 Backing code for a workshop in how to convert a Rails application over to a Hanami application
 
+## dependencies
+This workshop depends on having a docker engine on your machine.  You can install docker locally by [downloading the appropriate installer.](https://docs.docker.com/desktop/#next-steps) 
 
 ## Setup docker container
 
@@ -24,6 +26,11 @@ docker start rails2hanami
 open a shell on the container
 ```
 docker exec -it rails2hanami bash
+```
+
+remove the built docker container
+```
+docker rm rails2hanami
 ```
 
 ### Testing container

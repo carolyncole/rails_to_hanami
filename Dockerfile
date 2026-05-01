@@ -11,13 +11,16 @@ RUN echo "deb [signed-by=/etc/apt/keyrings/packages.mozilla.org.asc] https://pac
 COPY docker-files/mozilla.sources /etc/apt/sources.list.d/mozilla.sources
 COPY docker-files/mozilla.prefs /etc/apt/preferences.d/mozilla
 RUN apt-get update && apt-get install firefox -y
+RUN apt-get install npm -y
+RUN bundle config frozen false
 
 WORKDIR /usr/src/app
 
-
+RUN gem install hanami
 COPY rails_bookshop ./rails_bookshop
 WORKDIR /usr/src/app/rails_bookshop
 
 RUN bundle install
+RUN bin/rails db:migrate
 EXPOSE 3000
 CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0"]
