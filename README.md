@@ -40,3 +40,13 @@ To make sure your container is setup correctly run.  All examples should pass.
 docker exec -it rails2hanami bundle exec rails db:migrate
 docker exec -it rails2hanami bundle exec rspec
 ```
+
+### running the Hanami server
+```
+docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec bundle install
+docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec npm install
+docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec bundle exec hanami assets compile
+docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami dev
+```
+
+visit Hanami the site at http://localhost:2301/  
