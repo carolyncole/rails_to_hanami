@@ -23,4 +23,5 @@ WORKDIR /usr/src/app/rails_bookshop
 RUN bundle install
 RUN bin/rails db:migrate
 EXPOSE 3000
+EXPOSE 2300
 CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0"]

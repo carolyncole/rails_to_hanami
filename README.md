@@ -13,7 +13,7 @@ docker build -t rails2hanami .
 
 Start a container using the new image by running
 ```
-docker run -it --name rails2hanami --publish 3001:3000 rails2hanami
+docker run -it --name rails2hanami --publish 3001:3000 --publish 2301:2300 rails2hanami
 ```
 
 ### Additional commands
