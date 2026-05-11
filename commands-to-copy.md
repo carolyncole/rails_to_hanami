@@ -4,7 +4,7 @@
 ## Initialization Steps
 1. Build the docker instance
    ```
-   docker build -t rails2hanami
+   docker build -t rails2hanami .
    ```
 
 1. Run the docker instance
@@ -72,9 +72,18 @@
    Hanami.app["relations.books"].to_a
    ```
 
+   ```
+   exit
+   ```
+
 1. Copy over the system specs
    ```
    docker exec -it rails2hanami cp -r spec/system ../bookshelf/spec/
+   ```
+
+1. run all the tests
+   ```
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec rspec
    ```
 1. Replace in bookshelf/spec
    ```
@@ -90,7 +99,7 @@
    docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami generate repo book
    ```
 
-1.  Add to bookshelf/app/repos/book_repo.rb inside the Class 
+1. Add to bookshelf/app/repos/book_repo.rb inside the Class 
    ```
    def create(attributes)
      attributes[:created_at] = Time.now
@@ -138,7 +147,7 @@
    ```
    docker exec -it rails2hanami cp app/views/books/show.html.erb ../bookshelf/app/templates/books/
    docker exec -it rails2hanami cp app/views/books/_book.html.erb ../bookshelf/app/templates/books/
-   ``
+   ```
 
 1. Replace in bookshelf/app/templates/books/show.html.erb
    ```
@@ -165,7 +174,7 @@
 
 1. Replace in bookshelf/app/templates/books/show.html.erb
    ```
-    <%= render @book %>
+   <%= render @book %> 
    ```
    With 
    ```
