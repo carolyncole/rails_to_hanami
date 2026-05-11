@@ -17,8 +17,8 @@ RUN bundle config frozen false
 WORKDIR /usr/src/app
 
 RUN gem install hanami
-COPY rails_bookshop ./rails_bookshop
-WORKDIR /usr/src/app/rails_bookshop
+COPY rails_bookshelf ./rails_bookshelf
+WORKDIR /usr/src/app/rails_bookshelf
 
 RUN bundle install
 RUN bin/rails db:migrate
