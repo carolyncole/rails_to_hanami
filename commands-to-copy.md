@@ -108,6 +108,7 @@
    end
         
    def last = books.last
+   def get(id) = books.by_pk(id).one!
    ```
 
 1. Replace in bookshelf\spec
@@ -128,7 +129,7 @@
    Bookshelf::Repos::BookRepo.new.last
    ```
 
-1. Run the Show spec
+1. Run the Show spec (keep running this until it passes)
    ```
    docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec rspec spec/system/book_show_spec.rb
    ```
@@ -157,6 +158,7 @@
    ```
    flash[:notice]
    ```
+
 1. Allow cookies in bookshelf/config/app.rb
    ```
    config.actions.sessions = :cookie, { key: "bookshelf.session", secret: settings.session_secret, expire_after: 60*60*24*365 }
@@ -181,13 +183,6 @@
    <%= render "book", book: book, dom_id: dom_id %>
    ```
 
-1. Add to bookshelf/app/repos/book_repo.rb
-   ```
-   def get(id)
-     books.by_pk(id).one!
-   end
-   ```
-
 1. Add to bookshelf/app/views/books/show.rb
    ```
    include Deps["repos.book_repo"]
@@ -195,8 +190,16 @@
    expose :book do |id:|
      book_repo.get(id)
    end
+   ```
 
-   expose :dom_id do |id:|
+1. Create a Book struct
+   ```
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami generate struct book
+   ```
+
+1. Add to bookshelf/app/repos/book_repo.rb
+   ```
+   def dom_id
      "book_#{id}"
    end
    ```
@@ -207,7 +210,7 @@
    ```
    With
    ```
-   <%= dom_id %> 
+   <%= book.dom_id %> 
    ```
 
 1. Generate edit and delete actions
@@ -227,7 +230,7 @@
    , as: "delete_book"
    ```
 
-1. Add the name to the route `get "/books/delete", to: "books.delete"` in config/routes.rb
+1. Add the name to the route `get "/books", to: "books.index"` in config/routes.rb
    ```
    , as: "books"
    ```
@@ -260,4 +263,69 @@
    <%= form_for :book, routes.path(:book, id: book.id), method: :delete do |f| %>
      <%= f.submit "Destroy this book" %>
    <% end %>
+   ```
+
+1. Copy over the rails view for index
+   ```
+   docker exec -it rails2hanami cp app/views/books/index.html.erb ../bookshelf/app/templates/books/
+   ```
+
+1. run the Index spec (keep running this until it passes)
+   ```
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec rspec spec/system/book_index_spec.rb
+   ```
+
+1. Replace in bookshelf/app/templates/books/index.html.erb
+   ```
+   notice
+   ```
+   With 
+   ```
+   flash[:notice]
+   ```
+
+ 1. Add to bookshelf/app/views/books/index.rb
+   ```
+   include Deps["repos.book_repo"]
+
+   expose :books do
+     book_repo.books.to_a
+   end
+   ```
+
+1. Replace in bookshelf/app/templates/books/index.html.erb
+   ```
+   @books
+   ```
+   With 
+   ```
+   books
+   ```
+
+1. Replace in bookshelf/app/templates/books/index.html.erb
+   ```
+   <%= render book %> 
+   ```
+   With 
+   ```
+   <%= render "book", book: book
+   ```
+
+1. Generate a new action
+   ```
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami generate action books.new --skip-tests
+   ```
+   
+   Add the name to the route `get "/books/new", to: "books.new"` in config/routes.rb
+   ```
+   , as: "new_book"
+   ```
+
+1. Replace in bookshelf/app/templates/books/index.html.erb
+   ```
+   new_book_path
+   ```
+   With 
+   ```
+   routes.path(:new_book)
    ```
