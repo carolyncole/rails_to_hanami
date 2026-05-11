@@ -176,11 +176,11 @@
 
 1. Replace in bookshelf/app/templates/books/show.html.erb
    ```
-   <%= render @book %> 
+   <%= render @book %>
    ```
    With 
    ```
-   <%= render "book", book: book, dom_id: dom_id %>
+   <%= render "book", book: book %>
    ```
 
 1. Add to bookshelf/app/views/books/show.rb
@@ -285,13 +285,13 @@
    ```
 
  1. Add to bookshelf/app/views/books/index.rb
-   ```
-   include Deps["repos.book_repo"]
+    ```
+    include Deps["repos.book_repo"]
 
-   expose :books do
-     book_repo.books.to_a
-   end
-   ```
+    expose :books do
+      book_repo.books.to_a
+    end
+    ```
 
 1. Replace in bookshelf/app/templates/books/index.html.erb
    ```
@@ -304,11 +304,11 @@
 
 1. Replace in bookshelf/app/templates/books/index.html.erb
    ```
-   <%= render book %> 
+   <%= render book %>
    ```
    With 
    ```
-   <%= render "book", book: book
+   <%= render "book", book: book %>
    ```
 
 1. Generate a new action
@@ -328,4 +328,130 @@
    With 
    ```
    routes.path(:new_book)
+   ```
+
+1. Copy over the New views
+   ```
+   docker exec -it rails2hanami cp app/views/books/new.html.erb ../bookshelf/app/templates/books/
+   docker exec -it rails2hanami cp app/views/books/_form.html.erb ../bookshelf/app/templates/books/
+   ```
+
+1. Run the Create test (keep running it until it passes)
+   ```
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec rspec spec/system/book_create_spec.rb
+   ```
+
+1. Replace line 1 in bookshelf/app/templates/books/_form.html.erb with
+   ```
+   <%= form_for routes.path(:create_book), method: "POST", values: {book: nil} do |form| %>
+   ```
+
+1. Generate the create action
+   ```
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami generate action books.create --skip-tests
+   ```
+
+   Add the name to the route `get "/books/new", to: "books.new"` in config/routes.rb
+   ```
+   , as: "create_book"
+   ```
+
+1. Replace in bookshelf/app/templates/books/_form.html.erb
+   ```
+   book.errors.any?
+   ```
+   With
+   ```
+   book&.errors&.any?
+   ```
+
+1. Replace in bookshelf/app/templates/books/new.html.erb
+   ```
+   books_path
+   ```
+   With
+   ```
+   routes.path(:books)
+   ```
+
+1. Replace in bookshelf/app/templates/books/_form.html.erb
+   ```
+   form.submit
+   ```
+   With
+   ```
+   form.submit "Create Book"
+   ```
+
+1. Copy the rails logic into bookshelf/app/actions/books/create.rb from rails_bookshelf/app/controllers/books_controller.rb#create
+   ```
+   def handle(request, response)
+     @book = Book.new(book_params)
+     if @book.save
+       redirect_to @book, notice: "Book was successfully created."
+     else
+       render :new, status: :unprocessable_entity
+     end
+   end
+   ```
+
+1. Add in bookshelf/app/actions/books/create.rb inside `class Create < Bookshelf::Action`
+   ```
+   include Deps["repos.book_repo"]
+
+   params do
+      required(:book).hash do
+         required(:title).filled(:string)
+         required(:author).filled(:string)
+      end
+   end
+  ```
+
+1. Change the handle code to validate parameters and utilize the book repo
+   ```
+   def handle(request, response)
+     if request.params.valid?
+        book = book_repo.create(request.params[:book])
+        response.flash[:notice] = "Book was successfully created"
+        response.redirect_to routes.path(:book, id: book[:id])
+     else
+       response.flash.now[:alert] = "Could not create book"
+     end
+   end
+   ```
+
+1. Replace in bookshelf/app/templates/books/_form.html.erb
+   ```
+   form.label :author
+   ```
+   With
+   ```
+   form.label "book.author"
+   ```
+
+1. Replace in bookshelf/app/templates/books/_form.html.erb
+   ```
+   form.text_field :author
+   ```
+   With
+   ```
+   form.text_field "book.author"
+   ```
+
+1. Replace in bookshelf/app/templates/books/_form.html.erb
+   ```
+   form.label :title
+   ```
+   With
+   ```
+   form.label "book.title"
+   ```
+
+1. Replace in bookshelf/app/templates/books/_form.html.erb
+   ```
+   form.text_field :title
+   ```
+   With
+   ```
+   form.text_field "book.title"
    ```
