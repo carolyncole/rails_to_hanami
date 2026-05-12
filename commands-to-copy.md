@@ -311,6 +311,15 @@
    <%= render "book", book: book %>
    ```
 
+1. Replace in bookshelf/app/templates/books/index.html.erb
+   ```
+   <%= link_to "Show this book", book %>
+   ```
+   With 
+   ```
+   <%= link_to "Show this book", routes.path(:book, id: book.id) %>
+   ```
+
 1. Generate a new action
    ```
    docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami generate action books.new --skip-tests
