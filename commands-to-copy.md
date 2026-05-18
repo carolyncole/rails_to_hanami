@@ -351,6 +351,35 @@
    routes.path(:new_book)
    ```
 1. check out the [index page in the application](http://localhost:2301/books)
+1. Copy over the rails layout
+   ```
+   docker exec -it rails2hanami cp app/views/layouts/application.html.erb ../bookshelf/app/templates/layouts/app.html.erb
+   docker exec -it rails2hanami cp app/assets/stylesheets/application.css ../bookshelf/app/assets/css/app.css
+   ```
+1. remove the following line in bookshelf/app/templates/layouts/app.html.erb as Hanami does Content Security by default
+   ```
+   <%= csp_meta_tag %>
+   ```
+1. Replace the following in bookshelf/app/templates/layouts/app.html.erb
+   ```
+   <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+       <%= javascript_importmap_tags %>
+   ```
+   With
+   ```
+   <%= favicon_tag %>
+   <%= stylesheet_tag "app" %>
+   ```
+1. Replace the following in bookshelf/app/templates/layouts/app.html.erb
+   ```
+   <%= csrf_meta_tags %>
+   ```
+   With
+   ```
+   <%= csrf_meta_tags.html_safe %>
+   ```
+1. docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami assets compile
+1. check out the [index page in the application](http://localhost:2301/books)
 1. Copy over the New views
    ```
    docker exec -it rails2hanami cp app/views/books/new.html.erb ../bookshelf/app/templates/books/
