@@ -23,12 +23,6 @@
    docker exec -it rails2hanami bundle exec rspec
    ```
 
-## Run the hanami tests
-   We will be running the test over and over again. I will not be making multiple copies of this command in these notes.  Either copy here or arrow up please.
-   ```
-   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec rspec
-   ```
-
 ## Workshop steps
 
 1. Generate the app
