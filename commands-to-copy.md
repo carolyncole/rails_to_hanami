@@ -265,7 +265,7 @@
    ```
    With
    ```
-   <%= form_for :book, routes.path(:book, id: book.id), method: :delete do |f| %>
+   <%= form_for :book, routes.path(:delete_book, id: book.id), method: :delete do |f| %>
      <%= f.submit "Destroy this book" %>
    <% end %>
    ```
