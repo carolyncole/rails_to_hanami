@@ -218,7 +218,7 @@
    <%= book.dom_id %> 
    ```
 
-1. Generate edit and delete actions
+1. Generate index, edit and delete actions
    ```
    docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami generate action books.edit --skip-tests
    docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami generate action books.delete --skip-tests 
