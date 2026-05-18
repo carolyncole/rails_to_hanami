@@ -269,7 +269,11 @@
      <%= f.submit "Destroy this book" %>
    <% end %>
    ```
-
+1. restart the Hanami server by going to the terminal and hitting `ctrl-c` and then rerunning the hanami command
+   ```
+   bundle exec hanami dev
+   ```
+1. check out the [show page in the application](http://localhost:2301/books/1)
 1. Copy over the rails view for index
    ```
    docker exec -it rails2hanami cp app/views/books/index.html.erb ../bookshelf/app/templates/books/
@@ -324,7 +328,10 @@
    ```
    <%= link_to "Show this book", routes.path(:book, id: book.id) %>
    ```
-
+1. Add the name to the route `get "/books/:id", to: "books.show"` in config/routes.rb
+   ```
+   , as: "book"
+   ```
 1. Generate a new action
    ```
    docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami generate action books.new --skip-tests
@@ -343,7 +350,7 @@
    ```
    routes.path(:new_book)
    ```
-
+1. check out the [index page in the application](http://localhost:2301/books)
 1. Copy over the New views
    ```
    docker exec -it rails2hanami cp app/views/books/new.html.erb ../bookshelf/app/templates/books/
