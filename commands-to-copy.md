@@ -202,7 +202,7 @@
    docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami generate struct book
    ```
 
-1. Add to bookshelf/app/repos/book_repo.rb
+1. Add to bookshelf/app/structs/book.rb
    ```
    def dom_id
      "book_#{id}"
