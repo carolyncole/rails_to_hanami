@@ -87,6 +87,17 @@
    ```
    require "spec_helper"
    ```
+1. Add Byebug to the Hanami app
+
+   Add to Gemfile
+   ```
+   gem "byebug"
+   ```
+
+   Run bundle install
+   ```
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle install
+   ```
 
 1. Create the book repo
    ```
