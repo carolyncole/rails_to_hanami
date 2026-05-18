@@ -356,7 +356,7 @@
    docker exec -it rails2hanami cp app/views/layouts/application.html.erb ../bookshelf/app/templates/layouts/app.html.erb
    docker exec -it rails2hanami cp app/assets/stylesheets/application.css ../bookshelf/app/assets/css/app.css
    ```
-1. remove the following line in bookshelf/app/templates/layouts/app.html.erb as Hanami does Content Security by default
+1. remove the following lines in bookshelf/app/templates/layouts/app.html.erb as Hanami does Content Security by default
    ```
    <%= csp_meta_tag %>
    ```
@@ -378,7 +378,14 @@
    ```
    <%= csrf_meta_tags.html_safe %>
    ```
-1. docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami assets compile
+1. Compile the assets
+   ```
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami assets compile
+   ```
+1.restart the Hanami server by going to the terminal and hitting `ctrl-c` and then rerunning the hanami command
+   ```
+   bundle exec hanami dev
+   ```
 1. check out the [index page in the application](http://localhost:2301/books)
 1. Copy over the New views
    ```
