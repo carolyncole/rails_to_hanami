@@ -5,7 +5,7 @@ RSpec.describe "books/", type: :system do
     it "visits the home page and shows a welcome message" do
       visit "/books"
   
-      expect(page).to have_content "Welcome to Rails Bookshelf"
+      expect(page).to have_content "Welcome to the Bookshelf"
     end
 
     it "shows books on the index" do
