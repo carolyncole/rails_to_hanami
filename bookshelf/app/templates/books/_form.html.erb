@@ -1,4 +1,4 @@
- <%= form_for :book, routes.path(:books), method: "POST" do |form| %>
+<%= form_for :book, form_path, method: form_method do |form| %>
   <div>
     <%= form.label :author, style: "display: block" %>
     <%= form.text_field :author %>
