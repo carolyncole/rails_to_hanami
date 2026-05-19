@@ -376,13 +376,13 @@
    ```
    With
    ```
-   <%= csrf_meta_tags.html_safe %>
+   <%= csrf_meta_tags&.html_safe %>
    ```
 1. Compile the assets
    ```
    docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami assets compile
    ```
-1.restart the Hanami server by going to the terminal and hitting `ctrl-c` and then rerunning the hanami command
+1. Restart the Hanami server by going to the terminal and hitting `ctrl-c` and then rerunning the hanami command
    ```
    bundle exec hanami dev
    ```
@@ -440,7 +440,8 @@
    form.submit "Create Book"
    ```
 
-1. Copy the rails logic into bookshelf/app/actions/books/create.rb from rails_bookshelf/app/controllers/books_controller.rb#create
+1. Copy the rails logic into bookshelf/app/actions/books/create.rb handle method from rails_bookshelf/app/controllers/books_controller.rb#create
+   Handle method will look like:
    ```
    def handle(request, response)
      @book = Book.new(book_params)
@@ -462,7 +463,7 @@
          required(:author).filled(:string)
       end
    end
-  ```
+   ```
 
 1. Change the handle code to validate parameters and utilize the book repo
    ```
