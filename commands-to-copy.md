@@ -400,7 +400,7 @@
 
 1. Replace line 1 in bookshelf/app/templates/books/_form.html.erb with
    ```
-   <%= form_for routes.path(:create_book), method: "POST", values: {book: nil} do |form| %>
+    <%= form_for :book, routes.path(:create_book), method: "POST" do |form| %>
    ```
 
 1. Generate the create action
@@ -413,15 +413,22 @@
    , as: "create_book"
    ```
 
-1. Replace in bookshelf/app/templates/books/_form.html.erb
+1. Replace in bookshelf/app/templates/books/new.html.erb
    ```
-   book.errors.any?
+   @book
    ```
    With
    ```
-   book&.errors&.any?
+   book
    ```
+1. Add to bookshelf/app/views/books/new.rb
+   ```
+   include Deps["repos.book_repo"]
 
+   expose :book do |context:|
+     context.request.params[:book]
+   end
+   ```
 1. Replace in bookshelf/app/templates/books/new.html.erb
    ```
    books_path
@@ -513,3 +520,4 @@
    ```
    form.text_field "book.title"
    ```
+1. check out the [index page in the application](http://localhost:2301/books) and make a new book
