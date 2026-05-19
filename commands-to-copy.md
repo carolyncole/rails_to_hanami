@@ -218,10 +218,10 @@
    <%= book.dom_id %> 
    ```
 
-1. Generate index, edit and delete actions
+1. Generate index, edit and destroy actions
    ```
    docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami generate action books.edit --skip-tests
-   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami generate action books.delete --skip-tests 
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami generate action books.destroy --skip-tests 
    docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami generate action books.index --skip-tests 
    ```
 
@@ -230,9 +230,9 @@
    , as: "edit_book"
    ```
 
-1. Add the name to the route `get "/books/delete", to: "books.delete"` in config/routes.rb
+1. Add the name to the route `delete "/books/:id", to: "books.destroy"` in config/routes.rb
    ```
-   , as: "delete_book"
+   , as: "destroy_book"
    ```
 
 1. Add the name to the route `get "/books", to: "books.index"` in config/routes.rb
@@ -265,7 +265,7 @@
    ```
    With
    ```
-   <%= form_for :book, routes.path(:delete_book, id: book.id), method: :delete do |f| %>
+   <%= form_for :book, routes.path(:destroy_book, id: book.id), method: :delete do |f| %>
      <%= f.submit "Destroy this book" %>
    <% end %>
    ```
