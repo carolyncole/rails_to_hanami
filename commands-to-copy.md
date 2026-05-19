@@ -485,39 +485,4 @@
    end
    ```
 
-1. Replace in bookshelf/app/templates/books/_form.html.erb
-   ```
-   form.label :author
-   ```
-   With
-   ```
-   form.label "book.author"
-   ```
-
-1. Replace in bookshelf/app/templates/books/_form.html.erb
-   ```
-   form.text_field :author
-   ```
-   With
-   ```
-   form.text_field "book.author"
-   ```
-
-1. Replace in bookshelf/app/templates/books/_form.html.erb
-   ```
-   form.label :title
-   ```
-   With
-   ```
-   form.label "book.title"
-   ```
-
-1. Replace in bookshelf/app/templates/books/_form.html.erb
-   ```
-   form.text_field :title
-   ```
-   With
-   ```
-   form.text_field "book.title"
-   ```
 1. check out the [index page in the application](http://localhost:2301/books) and make a new book
