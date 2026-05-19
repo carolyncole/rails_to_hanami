@@ -14,9 +14,12 @@ RSpec.describe "book/", type: :system do
       click_on "Edit this book"
       expect(find('#book-title').value).to eq("book 1")
       expect(find('#book-author').value).to eq("author 1")
+      fill_in "book-title", with: ""
+      click_on "Update Book"
+      expect(page).to have_content("Error(s) prohibited this book from being saved")
+      expect(page).to have_content("Title: must be filled")
       fill_in "book-title", with: "book 1 update"
       click_on "Update Book"
-      expect(page).to have_content("Book was successfully updated")
       book = Bookshelf::Repos::BookRepo.new.get(book.id)
       expect(book.title).to eq("book 1 update")
     end
