@@ -10,6 +10,12 @@ module Bookshelf
         expose :book do |context:|
           context.request.params[:book]
         end
+
+        expose :form_submit, default: "Create Book"
+        expose :form_method, default: "POST"
+        expose :form_path do |context:| 
+          context.routes.path(:books)
+        end
       end
     end
   end

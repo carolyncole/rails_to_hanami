@@ -13,11 +13,12 @@ RSpec.describe "book/", type: :system do
       expect(page).to have_content "Author: author 1"
       expect(page).not_to have_content "Author: author 2"
       click_on "Edit this book"
-      expect(find('#book_title').value).to eq("book 1")
-      expect(find('#book_author').value).to eq("author 1")
-      fill_in "book_title", with: "book 1 update"
+      expect(find('#book-title').value).to eq("book 1")
+      expect(find('#book-author').value).to eq("author 1")
+      fill_in "book-title", with: "book 1 update"
       click_on "Update Book"
-      book.reload
+      expect(page).to have_content("Book was successfully updated")
+      book = Bookshelf::Repos::BookRepo.new.get(book.id)
       expect(book.title).to eq("book 1 update")
     end
   end
