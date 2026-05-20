@@ -1,5 +1,5 @@
 # Cheat Sheet
-  This document is meant to make copying commands easier for workshop participants. Each command show in the slides should be in this document
+  This document is meant to make copying commands easier for workshop participants. Each command shown in the slides should be in this document
 
 ## Initialization Steps
 1. Build the docker instance
@@ -21,12 +21,6 @@
 
    ```
    docker exec -it rails2hanami bundle exec rspec
-   ```
-
-## Run the hanami tests
-   We will be running the test over and over again. I will not be making multiple copies of this command in these notes.  Either copy here or arrow up please.
-   ```
-   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec rspec
    ```
 
 ## Workshop steps
@@ -92,6 +86,17 @@
    With
    ```
    require "spec_helper"
+   ```
+1. Add Byebug to the Hanami app
+
+   Add to Gemfile
+   ```
+   gem "byebug"
+   ```
+
+   Run bundle install
+   ```
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle install
    ```
 
 1. Create the book repo
@@ -197,7 +202,7 @@
    docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami generate struct book
    ```
 
-1. Add to bookshelf/app/repos/book_repo.rb
+1. Add to bookshelf/app/structs/book.rb
    ```
    def dom_id
      "book_#{id}"
@@ -213,10 +218,10 @@
    <%= book.dom_id %> 
    ```
 
-1. Generate edit and delete actions
+1. Generate index, edit and destroy actions
    ```
    docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami generate action books.edit --skip-tests
-   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami generate action books.delete --skip-tests 
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami generate action books.destroy --skip-tests 
    docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami generate action books.index --skip-tests 
    ```
 
@@ -225,9 +230,9 @@
    , as: "edit_book"
    ```
 
-1. Add the name to the route `get "/books/delete", to: "books.delete"` in config/routes.rb
+1. Add the name to the route `delete "/books/:id", to: "books.destroy"` in config/routes.rb
    ```
-   , as: "delete_book"
+   , as: "destroy_book"
    ```
 
 1. Add the name to the route `get "/books", to: "books.index"` in config/routes.rb
@@ -260,11 +265,15 @@
    ```
    With
    ```
-   <%= form_for :book, routes.path(:book, id: book.id), method: :delete do |f| %>
+   <%= form_for :book, routes.path(:destroy_book, id: book.id), method: :delete do |f| %>
      <%= f.submit "Destroy this book" %>
    <% end %>
    ```
-
+1. restart the Hanami server by going to the terminal and hitting `ctrl-c` and then rerunning the hanami command
+   ```
+   bundle exec hanami dev
+   ```
+1. check out the [show page in the application](http://localhost:2301/books/1)
 1. Copy over the rails view for index
    ```
    docker exec -it rails2hanami cp app/views/books/index.html.erb ../bookshelf/app/templates/books/
@@ -319,7 +328,10 @@
    ```
    <%= link_to "Show this book", routes.path(:book, id: book.id) %>
    ```
-
+1. Add the name to the route `get "/books/:id", to: "books.show"` in config/routes.rb
+   ```
+   , as: "book"
+   ```
 1. Generate a new action
    ```
    docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami generate action books.new --skip-tests
@@ -338,7 +350,43 @@
    ```
    routes.path(:new_book)
    ```
-
+1. check out the [index page in the application](http://localhost:2301/books)
+1. Copy over the rails layout
+   ```
+   docker exec -it rails2hanami cp app/views/layouts/application.html.erb ../bookshelf/app/templates/layouts/app.html.erb
+   docker exec -it rails2hanami cp app/assets/stylesheets/application.css ../bookshelf/app/assets/css/app.css
+   ```
+1. remove the following lines in bookshelf/app/templates/layouts/app.html.erb as Hanami does Content Security by default
+   ```
+   <%= csp_meta_tag %>
+   ```
+1. Replace the following in bookshelf/app/templates/layouts/app.html.erb
+   ```
+   <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+       <%= javascript_importmap_tags %>
+   ```
+   With
+   ```
+   <%= favicon_tag %>
+   <%= stylesheet_tag "app" %>
+   ```
+1. Replace the following in bookshelf/app/templates/layouts/app.html.erb
+   ```
+   <%= csrf_meta_tags %>
+   ```
+   With
+   ```
+   <%= csrf_meta_tags&.html_safe %>
+   ```
+1. Compile the assets
+   ```
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami assets compile
+   ```
+1. Restart the Hanami server by going to the terminal and hitting `ctrl-c` and then rerunning the hanami command
+   ```
+   bundle exec hanami dev
+   ```
+1. check out the [index page in the application](http://localhost:2301/books)
 1. Copy over the New views
    ```
    docker exec -it rails2hanami cp app/views/books/new.html.erb ../bookshelf/app/templates/books/
@@ -352,7 +400,7 @@
 
 1. Replace line 1 in bookshelf/app/templates/books/_form.html.erb with
    ```
-   <%= form_for routes.path(:create_book), method: "POST", values: {book: nil} do |form| %>
+    <%= form_for :book, routes.path(:create_book), method: "POST" do |form| %>
    ```
 
 1. Generate the create action
@@ -365,15 +413,22 @@
    , as: "create_book"
    ```
 
-1. Replace in bookshelf/app/templates/books/_form.html.erb
+1. Replace in bookshelf/app/templates/books/new.html.erb
    ```
-   book.errors.any?
+   @book
    ```
    With
    ```
-   book&.errors&.any?
+   book
    ```
+1. Add to bookshelf/app/views/books/new.rb
+   ```
+   include Deps["repos.book_repo"]
 
+   expose :book do |context:|
+     context.request.params[:book]
+   end
+   ```
 1. Replace in bookshelf/app/templates/books/new.html.erb
    ```
    books_path
@@ -392,7 +447,8 @@
    form.submit "Create Book"
    ```
 
-1. Copy the rails logic into bookshelf/app/actions/books/create.rb from rails_bookshelf/app/controllers/books_controller.rb#create
+1. Copy the rails logic into bookshelf/app/actions/books/create.rb handle method from rails_bookshelf/app/controllers/books_controller.rb#create
+   Handle method will look like:
    ```
    def handle(request, response)
      @book = Book.new(book_params)
@@ -414,7 +470,7 @@
          required(:author).filled(:string)
       end
    end
-  ```
+   ```
 
 1. Change the handle code to validate parameters and utilize the book repo
    ```
@@ -429,38 +485,4 @@
    end
    ```
 
-1. Replace in bookshelf/app/templates/books/_form.html.erb
-   ```
-   form.label :author
-   ```
-   With
-   ```
-   form.label "book.author"
-   ```
-
-1. Replace in bookshelf/app/templates/books/_form.html.erb
-   ```
-   form.text_field :author
-   ```
-   With
-   ```
-   form.text_field "book.author"
-   ```
-
-1. Replace in bookshelf/app/templates/books/_form.html.erb
-   ```
-   form.label :title
-   ```
-   With
-   ```
-   form.label "book.title"
-   ```
-
-1. Replace in bookshelf/app/templates/books/_form.html.erb
-   ```
-   form.text_field :title
-   ```
-   With
-   ```
-   form.text_field "book.title"
-   ```
+1. check out the [index page in the application](http://localhost:2301/books) and make a new book

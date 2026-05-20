@@ -1,4 +1,4 @@
-# hanami-to-rails
+# Rails to Hanami
 Backing code for a workshop in how to convert a Rails application over to a Hanami application
 
 ## dependencies
