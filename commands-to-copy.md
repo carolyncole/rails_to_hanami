@@ -39,12 +39,18 @@
    ```
 
 1. Setup and run the new Hanami application
+   install the dependencies
    ```
    docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle install
    docker exec -w /usr/src/app/bookshelf -it rails2hanami npm install
    docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami assets compile
+   ```
+   run the Hanami dev server
+   ```
    docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami dev
    ```
+
+1. 1. check out the [hanami application](http://localhost:2301)
 
 1. Seed the Rails database and copy it over to Hanami
    ```
@@ -140,8 +146,8 @@
 
 1. Check out the completed code branch
    ```
-   mv book_shelf book_shelf_init
-   git switch initial-setup
+   mv bookshelf bookshelf_init
+   git reset --hard origin/initial-setup
    docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle install
    docker exec -w /usr/src/app/bookshelf -it rails2hanami npm install
    docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami assets compile
@@ -190,7 +196,7 @@
    setting :session_secret, constructor: Types::String
    ```
 
-1. Add the value in bookshel/.env
+1. Add the value in bookshelf/.env
    ```
    SESSION_SECRET=____local_development_secret_only____local_development_secret_only___
    ```
@@ -263,7 +269,6 @@
    With 
    ```
    routes.path(:edit_book, id: book.id)
-
    ```
 
 1. Replace in bookshelf/app/templates/books/show.html.erb
@@ -297,8 +302,8 @@
 1. Stop the Hanami server by going to the terminal and hitting `ctrl-c`
 1. Check out the completed code branch
    ```
-   mv book_shelf book_shelf_my_show
-   git switch book-show
+   mv bookshelf bookshelf_my_show
+   git reset --hard origin/book-show
    docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle install
    docker exec -w /usr/src/app/bookshelf -it rails2hanami npm install
    docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami assets compile
@@ -385,6 +390,26 @@
    routes.path(:new_book)
    ```
 1. check out the [index page in the application](http://localhost:2301/books)
+
+#### Working Index
+
+1. Stop the Hanami server by going to the terminal and hitting `ctrl-c`
+1. Check out the completed code branch
+   ```
+   mv bookshelf bookshelf_my_index
+   git reset --hard origin/book-index
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle install
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami npm install
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami assets compile
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec rspec spec/system/book_index_spec.rb
+   ```
+1. Start the hanami dev server
+   ```
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami dev
+   ```
+
+### Application Layout
+
 1. Copy over the rails layout
    ```
    docker exec -it rails2hanami cp app/views/layouts/application.html.erb ../bookshelf/app/templates/layouts/app.html.erb
@@ -394,6 +419,13 @@
    ```
    <%= csp_meta_tag %>
    ```
+1. We will utilize the hanami icon so we can tell our tabs apart. Remove the following lines
+   ```
+       <link rel="icon" href="/icon.png" type="image/png">
+       <link rel="icon" href="/icon.svg" type="image/svg+xml">
+       <link rel="apple-touch-icon" href="/icon.png">
+   ```
+
 1. Replace the following in bookshelf/app/templates/layouts/app.html.erb
    ```
    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
@@ -423,13 +455,13 @@
 
 1. check out the [index page in the application](http://localhost:2301/books)
 
-#### Working Index
+#### Working Layout
 
 1. Stop the Hanami server by going to the terminal and hitting `ctrl-c`
 1. Check out the completed code branch
    ```
-   mv book_shelf book_shelf_my_index
-   git switch book-index
+   mv bookshelf bookshelf_my_layout
+   git reset --hard origin/app-layout
    docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle install
    docker exec -w /usr/src/app/bookshelf -it rails2hanami npm install
    docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami assets compile
@@ -552,8 +584,8 @@
 1. Stop the Hanami server by going to the terminal and hitting `ctrl-c`
 1. Check out the completed code branch
    ```
-   mv book_shelf book_shelf_my_new
-   git switch book-new
+   mv bookshelf bookshelf_my_new
+   git reset --hard origin/book-new
    docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle install
    docker exec -w /usr/src/app/bookshelf -it rails2hanami npm install
    docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami assets compile
@@ -589,8 +621,8 @@
 1. Stop the Hanami server by going to the terminal and hitting `ctrl-c`
 1. Check out the completed code branch
    ```
-   mv book_shelf book_shelf_my_delete
-   git switch book-delete
+   mv bookshelf bookshelf_my_delete
+   git reset --hard origin/book-delete
    docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle install
    docker exec -w /usr/src/app/bookshelf -it rails2hanami npm install
    docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami assets compile
@@ -622,8 +654,8 @@
 1. Stop the Hanami server by going to the terminal and hitting `ctrl-c`
 1. Check out the completed code branch
    ```
-   mv book_shelf book_shelf_my_edit
-   git switch book-edit
+   mv bookshelf bookshelf_my_edit
+   git reset --hard origin/book-edit
    docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle install
    docker exec -w /usr/src/app/bookshelf -it rails2hanami npm install
    docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami assets compile
