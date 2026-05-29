@@ -25,6 +25,8 @@
 
 ## Workshop steps
 
+### Initial Application Setup
+
 1. Generate the app
    ```
    docker exec -w /usr/src/app -it rails2hanami bash
@@ -133,6 +135,20 @@
    ```
    Bookshelf::Repos::BookRepo.new.last
    ```
+
+#### working initial setup
+
+1. Check out the completed code branch
+   ```
+   mv book_shelf book_shelf_init
+   git switch initial-setup
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle install
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami npm install
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami assets compile
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec rspec
+   ```
+
+### Book Show
 
 1. Run the Show spec (keep running this until it passes)
    ```
@@ -274,6 +290,21 @@
    bundle exec hanami dev
    ```
 1. check out the [show page in the application](http://localhost:2301/books/1)
+
+#### working show
+
+1. Check out the completed code branch
+   ```
+   mv book_shelf book_shelf_my_show
+   git switch book-show
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle install
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami npm install
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami assets compile
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec rspec spec/system/book_show_spec.rb
+   ```
+
+### Books Index
+
 1. Copy over the rails view for index
    ```
    docker exec -it rails2hanami cp app/views/books/index.html.erb ../bookshelf/app/templates/books/
@@ -328,10 +359,7 @@
    ```
    <%= link_to "Show this book", routes.path(:book, id: book.id) %>
    ```
-1. Add the name to the route `get "/books/:id", to: "books.show"` in config/routes.rb
-   ```
-   , as: "book"
-   ```
+
 1. Generate a new action
    ```
    docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami generate action books.new --skip-tests
@@ -387,6 +415,19 @@
    bundle exec hanami dev
    ```
 1. check out the [index page in the application](http://localhost:2301/books)
+
+#### working Index
+
+1. Check out the completed code branch
+   ```
+   mv book_shelf book_shelf_my_index
+   git switch book-index
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle install
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami npm install
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami assets compile
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec rspec spec/system/book_index_spec.rb
+   ```
+### Book New
 1. Copy over the New views
    ```
    docker exec -it rails2hanami cp app/views/books/new.html.erb ../bookshelf/app/templates/books/
@@ -486,3 +527,76 @@
    ```
 
 1. check out the [index page in the application](http://localhost:2301/books) and make a new book
+
+
+#### Working New
+
+1. Check out the completed code branch
+   ```
+   mv book_shelf book_shelf_my_new
+   git switch book-new
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle install
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami npm install
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami assets compile
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec rspec spec/system/book_create_spec.rb
+   ```
+
+### Exercise 1
+
+1. Run the delete test (keep running it until it passes)
+   ```
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec rspec spec/system/book_delete_spec.rb
+   ```
+
+#### Exercise 1 Hints
+
+1. There is an example in the [Hanami docs for deleting a Book](https://hanakai.org/learn/hanami/v2.3/getting-started/building-a-web-app#deleting-a-book)
+
+1. Code to delete a book that can be added to the relation
+   ```
+   def delete(id)
+     books.by_pk(id).changeset(:delete).commit
+   end
+   ```
+
+1. All elements are already visible to the user.  The link for deletion is on the show page
+
+#### Working Delete
+
+1. Check out the completed code branch
+   ```
+   mv book_shelf book_shelf_my_delete
+   git switch book-delete
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle install
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami npm install
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami assets compile
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec rspec spec/system/book_delete_spec.rb
+   ```
+
+### Exercise 2
+
+1. Run the edit test (keep running it until it passes)
+   ```
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec rspec spec/system/book_edit_spec.rb
+   ```
+
+#### Exercise 2 Hints
+
+1. There is an example in the [Hanami docs for updating a Book](https://hanakai.org/learn/hanami/v2.3/getting-started/building-a-web-app#updating-a-book)
+
+1. You can generate the update action with the following command
+   ```
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami generate action books.update --skip-tests
+   ```
+
+#### Working Edit
+
+1. Check out the completed code branch
+   ```
+   mv book_shelf book_shelf_my_edit
+   git switch book-edit
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle install
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami npm install
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami assets compile
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec rspec spec/system/book_edit_spec.rb
+   ```

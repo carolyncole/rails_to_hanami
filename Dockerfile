@@ -4,6 +4,7 @@ FROM ruby:3.3
 RUN bundle config --global frozen 1
 
 RUN gpg; true
+# command to install firefox are from https://support.mozilla.org/en-US/kb/install-firefox-linux
 RUN install -d -m 0755 /etc/apt/keyrings
 RUN wget -q https://packages.mozilla.org/apt/repo-signing-key.gpg -O- | tee /etc/apt/keyrings/packages.mozilla.org.asc > /dev/null
 RUN gpg -n -q --import --import-options import-show /etc/apt/keyrings/packages.mozilla.org.asc | awk '/pub/{getline; gsub(/^ +| +$/,""); if($0 == "35BAA0B33E9EB396F59CA838C0BA5CE6DC6315A3") print "\nThe key fingerprint matches ("$0").\n"; else print "\nVerification failed: the fingerprint ("$0") does not match the expected one.\n"}'
