@@ -23,6 +23,10 @@
    docker exec -it rails2hanami bundle exec rspec
    ```
 
+## Check out the Rails application
+  Note we are running Rails on 3001 to avoid anything you may already have running
+   http://localhost:3001
+
 ## Workshop steps
 
 ### Initial Application Setup
@@ -45,12 +49,13 @@
    docker exec -w /usr/src/app/bookshelf -it rails2hanami npm install
    docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami assets compile
    ```
+   
    run the Hanami dev server
    ```
    docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami dev
    ```
 
-1. 1. check out the [hanami application](http://localhost:2301)
+1. check out the [hanami application](http://localhost:2301)
 
 1. Seed the Rails database and copy it over to Hanami
    ```
@@ -67,6 +72,7 @@
 1. Connect to the database in the Hanami application
    ```
    docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami generate relation books
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami generate repo book
    docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami console
    ```
 
@@ -78,9 +84,65 @@
    exit
    ```
 
-1. Copy over the system specs
+#### working database connection
+
+1. Check out the completed code branch
+   ```
+   mv bookshelf bookshelf_db_connect
+   git reset --hard origin/db-connect
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle install
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami npm install
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami assets compile
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami run 'puts Hanami.app["relations.books"].to_a'
+   ```
+
+### Hanami Routes and Actions
+
+1. In **bookshelf/config/routes.rb** add the following line to configure all routes for our book
+   ```
+   resources :books
+   ```
+
+1. View the routes created by the resource
+   ```
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami routes
+   ```
+
+1. Generate the actions we just defined routes for utilizing the Hanami command line generators 
+   ```
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami generate action books.show --skip-route --skip-tests
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami generate action books.index --skip-route --skip-tests
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami generate action books.new --skip-route --skip-tests
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami generate action books.create --skip-route --skip-tests
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami generate action books.edit --skip-route --skip-tests
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami generate action books.update --skip-route --skip-tests
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami generate action books.destroy --skip-route --skip-tests --skip-view
+   echo "**** Created Actions ****"
+   ls bookshelf/app/actions/books
+   echo "**** Created Views ****"
+   ls bookshelf/app/views/books
+   echo "**** Created Templates ****"
+   ls bookshelf/app/templates/books
+   ```
+
+#### working routes and actions
+
+1. Check out the completed code branch
+   ```
+   mv bookshelf bookshelf_routes
+   git reset --hard origin/routes
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle install
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami npm install
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami assets compile
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami routes
+   ```
+
+### Rails Views and Specs
+
+1. Copy over the system specs and the Rails views
    ```
    docker exec -it rails2hanami cp -r spec/system ../bookshelf/spec/
+   docker exec -it rails2hanami cp -r app/views/books ../bookshelf/app/templates/
    ```
 
 1. run all the tests
@@ -97,7 +159,7 @@
    ```
 1. Add Byebug to the Hanami app
 
-   Add to Gemfile
+   Add to **bookshelf/Gemfile**
    ```
    gem "byebug"
    ```
@@ -107,20 +169,26 @@
    docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle install
    ```
 
-1. Create the book repo
-   ```
-   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami generate repo book
-   ```
+1. Examples of the syntax for hanami can be found in the docs and specifically the web app tutorial https://hanakai.org/learn/hanami/v2.3/getting-started/building-a-web-app
 
-1. Add to bookshelf/app/repos/book_repo.rb inside the Class 
+1. Add The book interface methods to **bookshelf/app/repos/book_repo.rb** inside the Class 
    ```
    def create(attributes)
      attributes[:created_at] = Time.now
      attributes[:updated_at] = Time.now
      books.changeset(:create, attributes).commit
    end
-        
+
+   def update(id, attributes)
+      books.by_pk(id).changeset(:update, attributes).commit
+   end
+
+   def delete(id)
+     books.by_pk(id).changeset(:delete).commit
+   end
+
    def last = books.last
+   def count = books.count
    def get(id) = books.by_pk(id).one!
    ```
 
@@ -142,12 +210,55 @@
    Bookshelf::Repos::BookRepo.new.last
    ```
 
+1. Replace in bookshelf\spec
+   ```
+   change(Book, :count)
+   ```
+   With
+   ```
+   change { Bookshelf::Repos::BookRepo.new.count }
+   ```
+1. We no longer have syntax errors in our specs...  They are now running and telling us our code is not yet working!
+
 #### working initial setup
 
 1. Check out the completed code branch
    ```
-   mv bookshelf bookshelf_init
-   git reset --hard origin/initial-setup
+   mv bookshelf bookshelf_specs
+   git reset --hard origin/running-specs
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle install
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami npm install
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami assets compile
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec rspec
+   ```
+
+### Setting Up Flash Notices
+1. Replace in bookshelf/app/templates/books/
+   ```
+   notice
+   ```
+   With 
+   ```
+   flash[:notice]
+   ```
+
+1. Allow cookies in **bookshelf/config/app.rb**
+   ```
+   config.actions.sessions = :cookie, { key: "bookshelf.session", secret: settings.session_secret, expire_after: 60*60*24*365 }
+   ```
+
+1. Add the secret in **bookshelf/config/settings.rb**
+   ```
+   setting :session_secret, constructor: Types::String, default: "____local_development_secret_only____local_development_secret_only___"
+   ```
+
+
+#### working flash notices
+
+1. Check out the completed code branch
+   ```
+   mv bookshelf bookshelf_flash
+   git reset --hard origin/flash
    docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle install
    docker exec -w /usr/src/app/bookshelf -it rails2hanami npm install
    docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami assets compile
@@ -161,46 +272,6 @@
    docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec rspec spec/system/book_show_spec.rb
    ```
 
-1. Generate Show action
-   ```
-   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami generate action books.show --skip-tests 
-   ```
-
-   Add the name to the route `get "/books/:id", to: "books.show"` in config/routes.rb
-   ```
-   , as: "book"
-   ```
-
-1. Copy the show view
-   ```
-   docker exec -it rails2hanami cp app/views/books/show.html.erb ../bookshelf/app/templates/books/
-   docker exec -it rails2hanami cp app/views/books/_book.html.erb ../bookshelf/app/templates/books/
-   ```
-
-1. Replace in bookshelf/app/templates/books/show.html.erb
-   ```
-   notice
-   ```
-   With 
-   ```
-   flash[:notice]
-   ```
-
-1. Allow cookies in bookshelf/config/app.rb
-   ```
-   config.actions.sessions = :cookie, { key: "bookshelf.session", secret: settings.session_secret, expire_after: 60*60*24*365 }
-   ```
-
-1. Add the secret in bookshelf/config/settings.rb
-   ```
-   setting :session_secret, constructor: Types::String
-   ```
-
-1. Add the value in bookshelf/.env
-   ```
-   SESSION_SECRET=____local_development_secret_only____local_development_secret_only___
-   ```
-
 1. Replace in bookshelf/app/templates/books/show.html.erb
    ```
    <%= render @book %>
@@ -210,7 +281,7 @@
    <%= render "book", book: book %>
    ```
 
-1. Add to bookshelf/app/views/books/show.rb
+1. Add to **bookshelf/app/views/books/show.rb**
    ```
    include Deps["repos.book_repo"]
 
@@ -224,7 +295,7 @@
    docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami generate struct book
    ```
 
-1. Add to bookshelf/app/structs/book.rb
+1. Add to **bookshelf/app/structs/book.rb**
    ```
    def dom_id
      "book_#{id}"
@@ -238,28 +309,6 @@
    With
    ```
    <%= book.dom_id %> 
-   ```
-
-1. Generate index, edit and destroy actions
-   ```
-   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami generate action books.edit --skip-tests
-   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami generate action books.destroy --skip-tests 
-   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami generate action books.index --skip-tests 
-   ```
-
-1. Add the name to the route `get "/books/:id/edit", to: "books.edit"` in config/routes.rb
-   ```
-   , as: "edit_book"
-   ```
-
-1. Add the name to the route `delete "/books/:id", to: "books.destroy"` in config/routes.rb
-   ```
-   , as: "destroy_book"
-   ```
-
-1. Add the name to the route `get "/books", to: "books.index"` in config/routes.rb
-   ```
-   , as: "books"
    ```
 
 1. Replace in bookshelf/app/templates/books/show.html.erb
@@ -286,7 +335,7 @@
    ```
    With
    ```
-   <%= form_for :book, routes.path(:destroy_book, id: book.id), method: :delete do |f| %>
+   <%= form_for :book, routes.path(:book, id: book.id), method: :delete do |f| %>
      <%= f.submit "Destroy this book" %>
    <% end %>
    ```
@@ -297,7 +346,7 @@
 
 1. check out the [show page in the application](http://localhost:2301/books/1)
 
-#### Working Show
+#### Working Show Page
 
 1. Stop the Hanami server by going to the terminal and hitting `ctrl-c`
 1. Check out the completed code branch
@@ -316,26 +365,12 @@
 
 ### Books Index
 
-1. Copy over the rails view for index
-   ```
-   docker exec -it rails2hanami cp app/views/books/index.html.erb ../bookshelf/app/templates/books/
-   ```
-
 1. run the Index spec (keep running this until it passes)
    ```
    docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec rspec spec/system/book_index_spec.rb
    ```
 
-1. Replace in bookshelf/app/templates/books/index.html.erb
-   ```
-   notice
-   ```
-   With 
-   ```
-   flash[:notice]
-   ```
-
- 1. Add to bookshelf/app/views/books/index.rb
+ 1. Add to **bookshelf/app/views/books/index.rb**
     ```
     include Deps["repos.book_repo"]
 
@@ -346,11 +381,11 @@
 
 1. Replace in bookshelf/app/templates/books/index.html.erb
    ```
-   @books
+   <% @books.each do |book| %>
    ```
    With 
    ```
-   books
+   <% books.each do |book| %>
    ```
 
 1. Replace in bookshelf/app/templates/books/index.html.erb
@@ -364,31 +399,25 @@
 
 1. Replace in bookshelf/app/templates/books/index.html.erb
    ```
-   <%= link_to "Show this book", book %>
-   ```
-   With 
-   ```
-   <%= link_to "Show this book", routes.path(:book, id: book.id) %>
-   ```
-
-1. Generate a new action
-   ```
-   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami generate action books.new --skip-tests
-   ```
-   
-   Add the name to the route `get "/books/new", to: "books.new"` in config/routes.rb
-   ```
-   , as: "new_book"
-   ```
-
-1. Replace in bookshelf/app/templates/books/index.html.erb
-   ```
    new_book_path
    ```
    With 
    ```
    routes.path(:new_book)
    ```
+
+1. check out the [index page in the application](http://localhost:2301/books)
+   **NOTE** the show link does not work
+
+1. Replace in bookshelf/app/templates/books/index.html.erb
+   ```
+   <%= link_to "Show this book", book %>
+   ```
+   With
+   ```
+   <%= link_to "Show this book", routes.path(:book, id: book.id) %>
+   ```
+
 1. check out the [index page in the application](http://localhost:2301/books)
 
 #### Working Index
@@ -415,15 +444,14 @@
    docker exec -it rails2hanami cp app/views/layouts/application.html.erb ../bookshelf/app/templates/layouts/app.html.erb
    docker exec -it rails2hanami cp app/assets/stylesheets/application.css ../bookshelf/app/assets/css/app.css
    ```
-1. remove the following lines in bookshelf/app/templates/layouts/app.html.erb as Hanami does Content Security by default
+1. Hanami does Content Security by default so the CSP tag is not needed. Replace the following in bookshelf/app/templates/layouts/app.html.erb
    ```
-   <%= csp_meta_tag %>
+   <%= csrf_meta_tags %>
+       <%= csp_meta_tag %>
    ```
-1. We will utilize the hanami icon so we can tell our tabs apart. Remove the following lines
+   With
    ```
-       <link rel="icon" href="/icon.png" type="image/png">
-       <link rel="icon" href="/icon.svg" type="image/svg+xml">
-       <link rel="apple-touch-icon" href="/icon.png">
+   <%= csrf_meta_tags&.html_safe %>
    ```
 
 1. Replace the following in bookshelf/app/templates/layouts/app.html.erb
@@ -433,17 +461,20 @@
    ```
    With
    ```
-   <%= favicon_tag %>
-   <%= stylesheet_tag "app" %>
+   <%= stylesheet_tag "app", "data-turbo-track": "reload" %>
    ```
-1. Replace the following in bookshelf/app/templates/layouts/app.html.erb
+
+1. We will utilize the hanami icon so we can tell our tabs apart. Replace the following in bookshelf/app/templates/layouts/app.html.erb
    ```
-   <%= csrf_meta_tags %>
+   <link rel="icon" href="/icon.png" type="image/png">
+       <link rel="icon" href="/icon.svg" type="image/svg+xml">
+       <link rel="apple-touch-icon" href="/icon.png">
    ```
    With
    ```
-   <%= csrf_meta_tags&.html_safe %>
+   <%= favicon_tag %>
    ```
+
 1. Compile the assets
    ```
    docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami assets compile
@@ -473,67 +504,45 @@
    ```
 
 ### Book New
-1. Copy over the New views
-   ```
-   docker exec -it rails2hanami cp app/views/books/new.html.erb ../bookshelf/app/templates/books/
-   docker exec -it rails2hanami cp app/views/books/_form.html.erb ../bookshelf/app/templates/books/
-   ```
 
 1. Run the Create test (keep running it until it passes)
    ```
    docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec rspec spec/system/book_create_spec.rb
    ```
 
-1. Replace line 1 in bookshelf/app/templates/books/_form.html.erb with
+1. Replace line 1 in **bookshelf/app/templates/books/_form.html.erb with**
    ```
     <%= form_for :book, routes.path(:create_book), method: "POST" do |form| %>
    ```
 
-1. Generate the create action
+1. Replace in bookshelf/app/templates/books/_form.html.erb
    ```
-   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami generate action books.create --skip-tests
+   <%= form.submit %>
    ```
-
-   Add the name to the route `get "/books/new", to: "books.new"` in config/routes.rb
+   With
    ```
-   , as: "create_book"
+   <%= form.submit form_submit %>
    ```
 
 1. Replace in bookshelf/app/templates/books/new.html.erb
    ```
-   @book
+   <%= render "form", book: @book %>
    ```
    With
    ```
-   book
+   <%= render "form", book: book, form_submit: form_submit %>
    ```
-1. Add to bookshelf/app/views/books/new.rb
+1. Add to **bookshelf/app/views/books/new.rb**
    ```
    include Deps["repos.book_repo"]
 
+   expose :form_submit, default: "Create Book"
    expose :book do |context:|
      context.request.params[:book]
    end
    ```
-1. Replace in bookshelf/app/templates/books/new.html.erb
-   ```
-   books_path
-   ```
-   With
-   ```
-   routes.path(:books)
-   ```
 
-1. Replace in bookshelf/app/templates/books/_form.html.erb
-   ```
-   form.submit
-   ```
-   With
-   ```
-   form.submit "Create Book"
-   ```
-
-1. Copy the rails logic into bookshelf/app/actions/books/create.rb handle method from rails_bookshelf/app/controllers/books_controller.rb#create
+1. Copy the rails logic into **bookshelf/app/actions/books/create.rb** handle method from rails_bookshelf/app/controllers/books_controller.rb#create
    Handle method will look like:
    ```
    def handle(request, response)
@@ -546,7 +555,7 @@
    end
    ```
 
-1. Add in bookshelf/app/actions/books/create.rb inside `class Create < Bookshelf::Action`
+1. Add in **bookshelf/app/actions/books/create.rb** inside `class Create < Bookshelf::Action`
    ```
    include Deps["repos.book_repo"]
 
@@ -607,14 +616,20 @@
 
 1. There is an example in the [Hanami docs for deleting a Book](https://hanakai.org/learn/hanami/v2.3/getting-started/building-a-web-app#deleting-a-book)
 
-1. Code to delete a book that can be added to the relation
+1. All elements are already visible to the user.  The link for deletion is on the show page
+
+1. Code to delete a book has already been added to the repository.  You could call it with some code like...
    ```
-   def delete(id)
-     books.by_pk(id).changeset(:delete).commit
-   end
+   include Deps["repos.book_repo"]
+   ...
+      # in handle method
+      result = book_repo.delete(request.params[:id])
    ```
 
-1. All elements are already visible to the user.  The link for deletion is on the show page
+1. You can redirect to the books index with the following code
+   ```
+   response.redirect_to routes.path(:books)
+   ```
 
 #### Working Delete
 
@@ -644,10 +659,24 @@
 
 1. There is an example in the [Hanami docs for updating a Book](https://hanakai.org/learn/hanami/v2.3/getting-started/building-a-web-app#updating-a-book)
 
-1. You can generate the update action with the following command
+1. The create and edit display the same form
+
+1. You can expose the book to the form with the following code
    ```
-   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami generate action books.update --skip-tests
+   include Deps["repos.book_repo"]
+
+   expose :book do |context:, id:|
+      book_repo.get(id)
+   end
    ```
+
+1. You can expose the submit wording and the form method with code like
+   ```
+   expose :form_submit, default: "Update Book"
+   expose :form_method, default: "PATCH"
+   ```
+
+1. 
 
 #### Working Edit
 

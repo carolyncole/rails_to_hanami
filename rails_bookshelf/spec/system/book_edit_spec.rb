@@ -3,7 +3,7 @@ require "byebug"
 
 RSpec.describe "book/", type: :system do
 
-    it "visits the home page and shows a welcome message" do
+    it "visits the book show page and edits the book" do
       book = Book.create(title: "book 1", author: "author 1")
       Book.create(title: "book 2", author: "author 2")
       visit "/books/#{book.id}"

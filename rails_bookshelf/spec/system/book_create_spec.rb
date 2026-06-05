@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe "books/new", type: :system do
 
-    it "visits the home page and shows a welcome message" do
+    it "visits new book page and creates a book" do
       visit "/books/new"
 
       fill_in "Title", with: "awesome book"
