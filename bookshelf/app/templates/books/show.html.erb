@@ -7,6 +7,6 @@
   <%= link_to "Back to books", routes.path(:books) %>
 
   <%= form_for :book, routes.path(:book, id: book.id), method: :delete do |f| %>
-  <%= f.submit "Destroy this book" %>
-<% end %>
+    <%= f.submit "Destroy this book" %>
+  <% end %>
 </div>
