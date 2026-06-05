@@ -5,14 +5,14 @@
 <h1>Welcome to the Bookshelf</h1>
 
 <div id="books">
-  <% @books.each do |book| %>
+  <% books.each do |book| %>
     <div class="book">
-      <%= render book %>
+      <%= render "book", book: book %>
       <p>
-        <%= link_to "Show this book", book %>
+        <%= link_to "Show this book", routes.path(:book, id: book.id) %>
       </p>
     </div>
   <% end %>
 </div>
 
-<%= link_to "New book", new_book_path, class: "btn btn-primary" %>
+<%= link_to "New book", routes.path(:new_book), class: "btn btn-primary" %>
