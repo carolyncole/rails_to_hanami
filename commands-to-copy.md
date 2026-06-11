@@ -23,7 +23,7 @@
    docker exec -it rails2hanami bundle exec rspec
    ```
 
-## Check out the Rails application
+## Look at the Rails application
   Note we are running Rails on 3001 to avoid anything you may already have running
    http://localhost:3001
 
@@ -55,7 +55,7 @@
    docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami dev
    ```
 
-1. check out the [hanami application](http://localhost:2301)
+1. Look at the [hanami application](http://localhost:2301)
 
 1. Seed the Rails database and copy it over to Hanami
    ```
@@ -86,7 +86,7 @@
 
 #### working database connection
 
-1. Check out the completed code branch
+1. check out the completed code branch
    ```
    mv bookshelf bookshelf_db_connect
    git reset --hard origin/db-connect
@@ -127,7 +127,7 @@
 
 #### working routes and actions
 
-1. Check out the completed code branch
+1. check out the completed code branch
    ```
    mv bookshelf bookshelf_routes
    git reset --hard origin/routes
@@ -156,17 +156,6 @@
    With
    ```
    require "spec_helper"
-   ```
-1. Add Byebug to the Hanami app
-
-   Add to **bookshelf/Gemfile**
-   ```
-   gem "byebug"
-   ```
-
-   Run bundle install
-   ```
-   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle install
    ```
 
 1. Examples of the syntax for hanami can be found in the docs and specifically the web app tutorial https://hanakai.org/learn/hanami/v2.3/getting-started/building-a-web-app
@@ -210,7 +199,7 @@
    Bookshelf::Repos::BookRepo.new.last
    ```
 
-1. Replace in bookshelf\spec
+1. Replace in bookshelf\spec ( Hanami does not have the change helpers. fixes test for delete exercise)
    ```
    change(Book, :count)
    ```
@@ -218,11 +207,30 @@
    ```
    change { Bookshelf::Repos::BookRepo.new.count }
    ```
+
+1. Replace in bookshelf\spec (reload no longer works as objects don't change in functional programming. Fixes test for update exercise)
+   ```
+   book.reload
+   ```
+   With
+   ```
+   book = Bookshelf::Repos::BookRepo.get(book.id)
+   ```
+
+1. Replace in bookshelf\spec (Hanami helpers create ids with `-` instead of `_`. fixes tests for update exercise)
+   ```
+   'book_
+   ```
+   With
+   ```
+   'book-
+   ```
+
 1. We no longer have syntax errors in our specs...  They are now running and telling us our code is not yet working!
 
 #### working initial setup
 
-1. Check out the completed code branch
+1. check out the completed code branch
    ```
    mv bookshelf bookshelf_specs
    git reset --hard origin/running-specs
@@ -255,7 +263,7 @@
 
 #### working flash notices
 
-1. Check out the completed code branch
+1. check out the completed code branch
    ```
    mv bookshelf bookshelf_flash
    git reset --hard origin/flash
@@ -344,12 +352,12 @@
    docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami dev
    ```
 
-1. check out the [show page in the application](http://localhost:2301/books/2)
+1. Look at the [show page in the application](http://localhost:2301/books/2)
 
 #### Working Show Page
 
 1. Stop the Hanami server by going to the terminal and hitting `ctrl-c`
-1. Check out the completed code branch
+1. check out the completed code branch
    ```
    mv bookshelf bookshelf_my_show
    git reset --hard origin/book-show
@@ -406,7 +414,7 @@
    routes.path(:new_book)
    ```
 
-1. check out the [index page in the application](http://localhost:2301/books)
+1. Look at the [index page in the application](http://localhost:2301/books)
    **NOTE** the show link does not work
 
 1. Replace in bookshelf/app/templates/books/index.html.erb
@@ -418,12 +426,12 @@
    <%= link_to "Show this book", routes.path(:book, id: book.id) %>
    ```
 
-1. check out the [index page in the application](http://localhost:2301/books)
+1. Look at the [index page in the application](http://localhost:2301/books)
 
 #### Working Index
 
 1. Stop the Hanami server by going to the terminal and hitting `ctrl-c`
-1. Check out the completed code branch
+1. check out the completed code branch
    ```
    mv bookshelf bookshelf_my_index
    git reset --hard origin/book-index
@@ -484,12 +492,12 @@
    docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami dev
    ```
 
-1. check out the [index page in the application](http://localhost:2301/books)
+1. Look at the [index page in the application](http://localhost:2301/books)
 
 #### Working Layout
 
 1. Stop the Hanami server by going to the terminal and hitting `ctrl-c`
-1. Check out the completed code branch
+1. check out the completed code branch
    ```
    mv bookshelf bookshelf_my_layout
    git reset --hard origin/app-layout
@@ -585,13 +593,13 @@
    docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami dev
    ```
 
-1. check out the [index page in the application](http://localhost:2301/books) and make a new book
+1. Look at the [index page in the application](http://localhost:2301/books) and make a new book
 
 
 #### Working New
 
 1. Stop the Hanami server by going to the terminal and hitting `ctrl-c`
-1. Check out the completed code branch
+1. check out the completed code branch
    ```
    mv bookshelf bookshelf_my_new
    git reset --hard origin/book-new
@@ -634,7 +642,7 @@
 #### Working Delete
 
 1. Stop the Hanami server by going to the terminal and hitting `ctrl-c`
-1. Check out the completed code branch
+1. check out the completed code branch
    ```
    mv bookshelf bookshelf_my_delete
    git reset --hard origin/book-delete
@@ -670,13 +678,19 @@
    end
    ```
 
-1. You can expose the submit wording and the form method with code like
-   You will also need to expose the wording to go into the form in the new view **bookshelf/app/views/new.rb**
+1. You can expose the submit submit, method and path in the update view **bookshelf/app/views/update.rb** with code like
    ```
    expose :form_submit, default: "Update Book"
    expose :form_method, default: "PATCH"
    expose :form_path do |context:, id:|
       context.routes.path(:book, id: id)
+   end
+   ```
+   You will also need to expose the method and path in the new view **bookshelf/app/views/new.rb**
+   ```
+   expose :form_method, default: "POST"
+   expose :form_path do |context:|
+      context.routes.path(:books)
    end
    ```
 
@@ -688,7 +702,7 @@
 #### Working Edit
 
 1. Stop the Hanami server by going to the terminal and hitting `ctrl-c`
-1. Check out the completed code branch
+1. check out the completed code branch
    ```
    mv bookshelf bookshelf_my_edit
    git reset --hard origin/book-edit
