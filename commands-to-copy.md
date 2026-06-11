@@ -69,20 +69,51 @@
    DATABASE_URL=sqlite://db/development.sqlite3
    ```
 
-1. Connect to the database in the Hanami application
+1. Generate the Hanami relation and repository
    ```
    docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami generate relation books
    docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami generate repo book
+   ```
+
+1. Examples of the syntax for hanami can be found in the docs and specifically the web app tutorial https://hanakai.org/learn/hanami/v2.3/getting-started/building-a-web-app
+
+1. Add The book interface methods to **bookshelf/app/repos/book_repo.rb** inside the Class 
+   ```
+   def all = books.to_a
+
+   def create(attributes)
+     attributes[:created_at] = Time.now
+     attributes[:updated_at] = Time.now
+     books.changeset(:create, attributes).commit
+   end
+
+   def count = books.count
+
+   def delete(id)
+     books.by_pk(id).changeset(:delete).commit
+   end
+
+   def get(id) = books.by_pk(id).one!
+
+   def last = books.last
+
+   def update(id, attributes)
+     attributes[:updated_at] = Time.now
+     books.by_pk(id).changeset(:update, attributes).commit
+   end
+   ```
+
+1. View the Rails database in your Hanami application
+   ```
    docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami console
    ```
 
    ```
-   Hanami.app["relations.books"].to_a
-   ```
-
-   ```
+   puts Bookshelf::Repos::BookRepo.new.all.map(&:inspect)
    exit
    ```
+
+1. docker exec -w /usr/src/app/bookshelf -it 
 
 #### working database connection
 
@@ -93,7 +124,7 @@
    docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle install
    docker exec -w /usr/src/app/bookshelf -it rails2hanami npm install
    docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami assets compile
-   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami run 'puts Hanami.app["relations.books"].to_a'
+   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami run 'puts Bookshelf::Repos::BookRepo.new.all.map(&:inspect)'
    ```
 
 ### Hanami Routes and Actions
@@ -158,29 +189,6 @@
    require "spec_helper"
    ```
 
-1. Examples of the syntax for hanami can be found in the docs and specifically the web app tutorial https://hanakai.org/learn/hanami/v2.3/getting-started/building-a-web-app
-
-1. Add The book interface methods to **bookshelf/app/repos/book_repo.rb** inside the Class 
-   ```
-   def create(attributes)
-     attributes[:created_at] = Time.now
-     attributes[:updated_at] = Time.now
-     books.changeset(:create, attributes).commit
-   end
-
-   def update(id, attributes)
-      books.by_pk(id).changeset(:update, attributes).commit
-   end
-
-   def delete(id)
-     books.by_pk(id).changeset(:delete).commit
-   end
-
-   def last = books.last
-   def count = books.count
-   def get(id) = books.by_pk(id).one!
-   ```
-
 1. Replace in bookshelf\spec
    ```
    Book.create(
@@ -190,7 +198,9 @@
    Bookshelf::Repos::BookRepo.new.create(
    ```
 
-1. Replace in bookshelf\spec
+   **Technically we could stop here to get to our next failing test, but for times sake we will fix up the syntax in all the specs now...**
+
+1. Replace in bookshelf\spec (fixes test for delete exercise)
    ```
    Book.last
    ```
@@ -217,13 +227,22 @@
    book = Bookshelf::Repos::BookRepo.get(book.id)
    ```
 
-1. Replace in bookshelf\spec (Hanami helpers create ids with `-` instead of `_`. fixes tests for update exercise)
+1. Replace in bookshelf\spec (Hanami form helpers create ids with `-` instead of `_`. fixes tests for update exercise)
    ```
-   'book_
+   book_title
    ```
    With
    ```
-   'book-
+   book-title
+   ```
+
+1. Replace in bookshelf\spec (fixes tests for update exercise)
+   ```
+   book_author
+   ```
+   With
+   ```
+   book-author
    ```
 
 1. We no longer have syntax errors in our specs...  They are now running and telling us our code is not yet working!
