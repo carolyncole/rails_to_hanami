@@ -24,7 +24,7 @@
    ```
 
 ## Look at the Rails application
-  Note we are running Rails on 3001 to avoid anything you may already have running
+  **Note** we are running Rails on 3001 to avoid anything you may already have running
    http://localhost:3001
 
 ## Workshop steps
