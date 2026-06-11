@@ -520,7 +520,7 @@
 
 1. Replace line 1 in **bookshelf/app/templates/books/_form.html.erb** with
    ```
-    <%= form_for :book, routes.path(:create_book), method: "POST" do |form| %>
+    <%= form_for :book, routes.path(:books), method: "POST" do |form| %>
    ```
 
 1. Replace in bookshelf/app/templates/books/_form.html.erb
