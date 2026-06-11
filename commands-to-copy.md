@@ -64,7 +64,7 @@
    docker exec -w /usr/src/app/bookshelf -it rails2hanami cp ../rails_bookshelf/storage/test.sqlite3 db/
    ```
 
-1. In bookshelf/.env replace all with the following
+1. In **bookshelf/.env** replace all with the following
    ```
    DATABASE_URL=sqlite://db/development.sqlite3
    ```
@@ -329,7 +329,7 @@
    routes.path(:books)
    ```
 
-1. Replace in in bookshelf/app/templates/books/show.html.erb
+1. Replace in bookshelf/app/templates/books/show.html.erb
    ```
    <%= button_to "Destroy this book", @book, method: :delete %>
    ```
@@ -344,7 +344,7 @@
    docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami dev
    ```
 
-1. check out the [show page in the application](http://localhost:2301/books/1)
+1. check out the [show page in the application](http://localhost:2301/books/2)
 
 #### Working Show Page
 
@@ -510,7 +510,7 @@
    docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec rspec spec/system/book_create_spec.rb
    ```
 
-1. Replace line 1 in **bookshelf/app/templates/books/_form.html.erb with**
+1. Replace line 1 in **bookshelf/app/templates/books/_form.html.erb** with
    ```
     <%= form_for :book, routes.path(:create_book), method: "POST" do |form| %>
    ```
@@ -671,12 +671,19 @@
    ```
 
 1. You can expose the submit wording and the form method with code like
+   You will also need to expose the wording to go into the form in the new view **bookshelf/app/views/new.rb**
    ```
    expose :form_submit, default: "Update Book"
    expose :form_method, default: "PATCH"
+   expose :form_path do |context:, id:|
+      context.routes.path(:book, id: id)
+   end
    ```
 
-1. 
+1. You can pass those vars to the form partial in new.html.erb and edit.html.erb
+   ```
+   <%= render "form", book: book, form_submit: form_submit, form_path: form_path, form_method: form_method %>
+   ```
 
 #### Working Edit
 
