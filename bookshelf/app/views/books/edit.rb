@@ -15,6 +15,10 @@ module Bookshelf
         expose :form_path do |context:, id:|
           context.routes.path(:book, id: id)
         end
+
+        expose :errors do |context:|
+          context.request.params.errors[:book] || {}
+        end
       end
     end
   end
