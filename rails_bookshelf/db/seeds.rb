@@ -1,6 +1,6 @@
 # list pulled from redit https://www.reddit.com/r/ruby/comments/16zu7vy/good_books/
 ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
-    Book.find_or_create_by!(title: "Learn to Program", author: "Chris Pine")
-    Book.find_or_create_by!(title: "Eloquent Ruby", author: "Russ Olsen")
-    Book.find_or_create_by!(title: "Programming Ruby", author: "Dave Thomas")
+    Book.find_or_create_by!(title: "99 Bottles of OOP", author: "Sandi Metz")
+    Book.find_or_create_by!(title: "Design Patterns", author: "Gang of Four")
+    Book.find_or_create_by!(title: "Practical Object-Oriented Design", author: "Sandi Metz")
 end
