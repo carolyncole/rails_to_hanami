@@ -224,7 +224,7 @@
    ```
    With
    ```
-   book = Bookshelf::Repos::BookRepo.get(book.id)
+   book = Bookshelf::Repos::BookRepo.new.get(book.id)
    ```
 
 1. Replace in bookshelf\spec (Hanami form helpers create ids with `-` instead of `_`. fixes tests for update exercise)
@@ -247,7 +247,7 @@
 
 1. We no longer have syntax errors in our specs...  They are now running and telling us our code is not yet working!
 
-#### working initial setup
+#### working specs
 
 1. check out the completed code branch
    ```
@@ -340,14 +340,14 @@
 
 1. Replace in bookshelf/app/templates/books/show.html.erb
    ```
-   edit_book_path(@book) 
+   edit_book_path(@book)
    ```
    With 
    ```
    routes.path(:edit_book, id: book.id)
    ```
 
-1. Replace in bookshelf/app/templates/books/show.html.erb
+1. Replace in bookshelf/app/templates/books (will replace in 3 templates)
    ```
    books_path
    ```
@@ -537,7 +537,11 @@
    docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec rspec spec/system/book_create_spec.rb
    ```
 
-1. Replace line 1 in **bookshelf/app/templates/books/_form.html.erb** with
+1. Replace the following in bookshelf/app/templates/books/_form.html.erb
+   ```
+   <%= form_with(model: book) do |form| %>
+   ```
+   With
    ```
     <%= form_for :book, routes.path(:books), method: "POST" do |form| %>
    ```
@@ -653,6 +657,13 @@
       result = book_repo.delete(request.params[:id])
    ```
 
+1. you can require an integer parameter via
+   ```
+   params do
+      required(:id).filled(:integer)
+   end
+   ```
+
 1. You can redirect to the books index with the following code
    ```
    response.redirect_to routes.path(:books)
@@ -687,6 +698,21 @@
 1. There is an example in the [Hanami docs for updating a Book](https://hanakai.org/learn/hanami/v2.3/getting-started/building-a-web-app#updating-a-book)
 
 1. The create and edit display the same form
+   You can expose the submit, method and path in the update view **views/edit.rb** with code like
+   ```
+   expose :form_submit, default: "Update Book"
+   expose :form_method, default: "PATCH"
+   expose :form_path do |context:, id:|
+      context.routes.path(:book, id: id)
+   end
+   ```
+   You will also need to expose the method and path in the new view **views/new.rb**
+   ```
+   expose :form_method, default: "POST"
+   expose :form_path do |context:|
+      context.routes.path(:books)
+   end
+   ```
 
 1. You can expose the book to the form with the following code
    ```
@@ -697,26 +723,22 @@
    end
    ```
 
-1. You can expose the submit submit, method and path in the update view **bookshelf/app/views/update.rb** with code like
-   ```
-   expose :form_submit, default: "Update Book"
-   expose :form_method, default: "PATCH"
-   expose :form_path do |context:, id:|
-      context.routes.path(:book, id: id)
-   end
-   ```
-   You will also need to expose the method and path in the new view **bookshelf/app/views/new.rb**
-   ```
-   expose :form_method, default: "POST"
-   expose :form_path do |context:|
-      context.routes.path(:books)
-   end
-   ```
-
-1. You can pass those vars to the form partial in new.html.erb and edit.html.erb
+1. You can pass the exposed vars to the form partial in new.html.erb and edit.html.erb
    ```
    <%= render "form", book: book, form_submit: form_submit, form_path: form_path, form_method: form_method %>
    ```
+
+1. You can utilize all the form vars with code like
+   ```
+   <%= form_for :book, form_path, method: form_method do |form| %>
+   ```
+
+1. the update action will need both the id and the parameters from the create
+   ```
+   params do
+      required(:id).filled(:integer)
+      ...
+   end 
 
 #### Working Edit
 
