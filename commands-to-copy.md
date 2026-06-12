@@ -1,5 +1,5 @@
-# Cheat Sheet
-  This document is meant to make copying commands easier for workshop participants. Each command shown in the slides should be in this document
+# Commands to Copy
+  This document is meant to make copying commands easier for workshop participants.
 
 ## Initialization Steps
 1. Build the docker instance
