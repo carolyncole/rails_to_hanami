@@ -697,29 +697,27 @@
 
 1. There is an example in the [Hanami docs for updating a Book](https://hanakai.org/learn/hanami/v2.3/getting-started/building-a-web-app#updating-a-book)
 
-1. The create and edit display the same form
-   You can expose the submit, method and path in the update view **views/edit.rb** with code like
+1. The create and edit display the same form and take almost all the same parameters in the actions.
+
+1. You can expose the book submit wording, method and path in the update view **views/edit.rb** with code like
    ```
+   include Deps["repos.book_repo"]
+
+   expose :book do |context:, id:|
+      book_repo.get(id)
+   end
+
    expose :form_submit, default: "Update Book"
    expose :form_method, default: "PATCH"
    expose :form_path do |context:, id:|
       context.routes.path(:book, id: id)
    end
    ```
-   You will also need to expose the method and path in the new view **views/new.rb**
+   You will also need to expose the form method and path in the new view **views/new.rb**
    ```
    expose :form_method, default: "POST"
    expose :form_path do |context:|
       context.routes.path(:books)
-   end
-   ```
-
-1. You can expose the book to the form with the following code
-   ```
-   include Deps["repos.book_repo"]
-
-   expose :book do |context:, id:|
-      book_repo.get(id)
    end
    ```
 
