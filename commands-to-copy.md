@@ -245,6 +245,15 @@
    book-author
    ```
 
+1. Replace in bookshelf\ (fixes remaining @book references)
+   ```
+   @book
+   ```
+   With
+   ```
+   book
+   ```
+
 1. We no longer have syntax errors in our specs...  They are now running and telling us our code is not yet working!
 
 #### working specs
@@ -301,7 +310,7 @@
 
 1. Replace in bookshelf/app/templates/books/show.html.erb
    ```
-   <%= render @book %>
+   <%= render book %>
    ```
    With 
    ```
@@ -340,7 +349,7 @@
 
 1. Replace in bookshelf/app/templates/books/show.html.erb
    ```
-   edit_book_path(@book)
+   edit_book_path(book)
    ```
    With 
    ```
@@ -405,15 +414,6 @@
       book_repo.books.to_a
     end
     ```
-
-1. Replace in bookshelf/app/templates/books/index.html.erb
-   ```
-   <% @books.each do |book| %>
-   ```
-   With 
-   ```
-   <% books.each do |book| %>
-   ```
 
 1. Replace in bookshelf/app/templates/books/index.html.erb
    ```
@@ -557,7 +557,7 @@
 
 1. Replace in bookshelf/app/templates/books/new.html.erb
    ```
-   <%= render "form", book: @book %>
+   <%= render "form", book: book %>
    ```
    With
    ```
@@ -738,6 +738,10 @@
       ...
    end 
 
+1. you can update the book by calling something like
+   ```
+   book = book_repo.update(request.params[:id], request.params[:book])
+   ```
 #### Working Edit
 
 1. Stop the Hanami server by going to the terminal and hitting `ctrl-c`
