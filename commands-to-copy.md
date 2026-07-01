@@ -17,7 +17,7 @@
    docker exec -it rails2hanami bundle exec rails db:migrate
    ```
 
-## Run the rails tests
+## Run the Rails tests
 
    ```
    docker exec -it rails2hanami bundle exec rspec
@@ -50,12 +50,12 @@
    docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami assets compile
    ```
    
-   run the Hanami dev server
+   run the hanami dev server
    ```
    docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami dev
    ```
 
-1. Look at the [hanami application](http://localhost:2301)
+1. Look at the [Hanami application](http://localhost:2301)
 
 1. Seed the Rails database and copy it over to Hanami
    ```
@@ -75,7 +75,7 @@
    docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami generate repo book
    ```
 
-1. Examples of the syntax for hanami can be found in the docs and specifically the web app tutorial https://hanakai.org/learn/hanami/v2.3/getting-started/building-a-web-app
+1. Examples of the syntax for Hanami can be found in the docs and specifically the web app tutorial https://hanakai.org/learn/hanami/v2.3/getting-started/building-a-web-app
 
 1. Add The book interface methods to **bookshelf/app/repos/book_repo.rb** inside the Class 
    ```
@@ -189,7 +189,7 @@
    require "spec_helper"
    ```
 
-1. Replace in bookshelf\spec
+1. Replace in bookshelf/spec
    ```
    Book.create(
    ```
@@ -200,7 +200,7 @@
 
    **Technically we could stop here to get to our next failing test, but for times sake we will fix up the syntax in all the specs now...**
 
-1. Replace in bookshelf\spec (fixes test for delete exercise)
+1. Replace in bookshelf/spec (fixes test for delete exercise)
    ```
    Book.last
    ```
@@ -209,7 +209,7 @@
    Bookshelf::Repos::BookRepo.new.last
    ```
 
-1. Replace in bookshelf\spec ( Hanami does not have the change helpers. fixes test for delete exercise)
+1. Replace in bookshelf/spec ( Hanami does not have the change helpers. fixes test for delete exercise)
    ```
    change(Book, :count)
    ```
@@ -218,7 +218,7 @@
    change { Bookshelf::Repos::BookRepo.new.count }
    ```
 
-1. Replace in bookshelf\spec (reload no longer works as objects don't change in functional programming. Fixes test for update exercise)
+1. Replace in bookshelf/spec (reload no longer works as objects don't change in functional programming. Fixes test for update exercise)
    ```
    book.reload
    ```
@@ -227,7 +227,7 @@
    book = Bookshelf::Repos::BookRepo.new.get(book.id)
    ```
 
-1. Replace in bookshelf\spec (Hanami form helpers create ids with `-` instead of `_`. fixes tests for update exercise)
+1. Replace in bookshelf/spec (Hanami form helpers create ids with `-` instead of `_`. fixes tests for update exercise)
    ```
    book_title
    ```
@@ -236,7 +236,7 @@
    book-title
    ```
 
-1. Replace in bookshelf\spec (fixes tests for update exercise)
+1. Replace in bookshelf/spec (fixes tests for update exercise)
    ```
    book_author
    ```
@@ -245,7 +245,7 @@
    book-author
    ```
 
-1. Replace in bookshelf\ (fixes remaining @book references)
+1. Replace in bookshelf/ (fixes remaining @book references)
    ```
    @book
    ```
@@ -375,7 +375,7 @@
      <%= f.submit "Destroy this book" %>
    <% end %>
    ```
-1. Restart the Hanami server by going to the terminal and hitting `ctrl-c` and then rerunning the hanami command
+1. Restart the Hanami server by going to the terminal and hitting `ctrl-c` and then rerunning the Hanami command
    ```
    docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami dev
    ```
@@ -466,7 +466,7 @@
 
 ### Application Layout
 
-1. Copy over the rails layout
+1. Copy over the Rails layout
    ```
    docker exec -it rails2hanami cp app/views/layouts/application.html.erb ../bookshelf/app/templates/layouts/app.html.erb
    docker exec -it rails2hanami cp app/assets/stylesheets/application.css ../bookshelf/app/assets/css/app.css
@@ -491,7 +491,7 @@
    <%= stylesheet_tag "app", "data-turbo-track": "reload" %>
    ```
 
-1. We will utilize the hanami icon so we can tell our tabs apart. Replace the following in bookshelf/app/templates/layouts/app.html.erb
+1. We will utilize the Hanami icon so we can tell our tabs apart. Replace the following in bookshelf/app/templates/layouts/app.html.erb
    ```
    <link rel="icon" href="/icon.png" type="image/png">
        <link rel="icon" href="/icon.svg" type="image/svg+xml">
@@ -506,7 +506,7 @@
    ```
    docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami assets compile
    ```
-1. Restart the Hanami server by going to the terminal and hitting `ctrl-c` and then rerunning the hanami command
+1. Restart the Hanami server by going to the terminal and hitting `ctrl-c` and then rerunning the Hanami command
    ```
    docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami dev
    ```
@@ -573,7 +573,7 @@
    end
    ```
 
-1. Copy the rails logic into **bookshelf/app/actions/books/create.rb** handle method from rails_bookshelf/app/controllers/books_controller.rb#create
+1. Copy the Rails logic into **bookshelf/app/actions/books/create.rb** handle method from rails_bookshelf/app/controllers/books_controller.rb#create
    Handle method will look like:
    ```
    def handle(request, response)
@@ -611,7 +611,7 @@
    end
    ```
 
-1. Restart the Hanami server by going to the terminal and hitting `ctrl-c` and then rerunning the hanami command
+1. Restart the Hanami server by going to the terminal and hitting `ctrl-c` and then rerunning the Hanami command
    ```
    docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami dev
    ```
