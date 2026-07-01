@@ -367,7 +367,7 @@
 
 1. Replace in bookshelf/app/templates/books/show.html.erb
    ```
-   <%= button_to "Destroy this book", @book, method: :delete %>
+   <%= button_to "Destroy this book", book, method: :delete %>
    ```
    With
    ```
@@ -414,15 +414,6 @@
       book_repo.books.to_a
     end
     ```
-
-1. Replace in bookshelf/app/templates/books/index.html.erb
-   ```
-   <%= render book %>
-   ```
-   With 
-   ```
-   <%= render "book", book: book %>
-   ```
 
 1. Replace in bookshelf/app/templates/books/index.html.erb
    ```
@@ -502,16 +493,16 @@
    <%= favicon_tag %>
    ```
 
-1. Compile the assets
-   ```
-   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami assets compile
-   ```
-1. Restart the Hanami server by going to the terminal and hitting `ctrl-c` and then rerunning the Hanami command
-   ```
-   docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami dev
-   ```
-
 1. Look at the [index page in the application](http://localhost:2301/books)
+
+   1. Compile the assets
+      ```
+      docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami assets compile
+      ```
+   1. Restart the Hanami server by going to the terminal and hitting `ctrl-c` and then rerunning the hanami command
+      ```
+      docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami dev
+      ```
 
 #### Working Layout
 
@@ -535,6 +526,16 @@
 1. Run the Create test (keep running it until it passes)
    ```
    docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec rspec spec/system/book_create_spec.rb
+   ```
+
+1. Add to **bookshelf/app/views/books/new.rb**
+   ```
+   include Deps["repos.book_repo"]
+
+   expose :form_submit, default: "Create Book"
+   expose :book do |context:|
+     context.request.params[:book]
+   end
    ```
 
 1. Replace the following in bookshelf/app/templates/books/_form.html.erb
@@ -562,15 +563,6 @@
    With
    ```
    <%= render "form", book: book, form_submit: form_submit %>
-   ```
-1. Add to **bookshelf/app/views/books/new.rb**
-   ```
-   include Deps["repos.book_repo"]
-
-   expose :form_submit, default: "Create Book"
-   expose :book do |context:|
-     context.request.params[:book]
-   end
    ```
 
 1. Copy the Rails logic into **bookshelf/app/actions/books/create.rb** handle method from rails_bookshelf/app/controllers/books_controller.rb#create
@@ -617,7 +609,6 @@
    ```
 
 1. Look at the [index page in the application](http://localhost:2301/books) and make a new book
-
 
 #### Working New
 
