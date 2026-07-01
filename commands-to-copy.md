@@ -11,6 +11,11 @@
    ```
    docker run -it --name rails2hanami --publish 3001:3000 --publish 2301:2300 --volume .:/usr/src/app rails2hanami
    ```
+ 
+   1. If your container was running and then stopped restart the container by running
+      ```
+      docker start rails2hanami
+      ```
 
 1. Setup the databases
    ```
@@ -198,7 +203,7 @@
    Bookshelf::Repos::BookRepo.new.create(
    ```
 
-   **Technically we could stop here to get to our next failing test, but for times sake we will fix up the syntax in all the specs now...**
+   **Technically we could stop here to get to our next failing test, but for time's sake we will fix up the syntax in all the specs now...**
 
 1. Replace in bookshelf/spec (fixes test for delete exercise)
    ```
