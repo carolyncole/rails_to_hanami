@@ -7,7 +7,7 @@
 <div id="books">
   <% books.each do |book| %>
     <div class="book">
-      <%= render book %>
+      <%= render "book", book: book %>
       <p>
         <%= link_to "Show this book", book %>
       </p>

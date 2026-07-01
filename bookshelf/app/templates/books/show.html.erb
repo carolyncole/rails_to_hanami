@@ -1,10 +1,12 @@
 <p style="color: green"><%= flash[:notice] %></p>
 
-<%= render book %>
+<%= render "book", book: book %>
 
 <div>
-  <%= link_to "Edit this book", edit_book_path(book) %> |
-  <%= link_to "Back to books", books_path %>
+  <%= link_to "Edit this book", routes.path(:edit_book, id: book.id) %> |
+  <%= link_to "Back to books", routes.path(:books) %>
 
-  <%= button_to "Destroy this book", book, method: :delete %>
+  <%= form_for :book, routes.path(:book, id: book.id), method: :delete do |f| %>
+  <%= f.submit "Destroy this book" %>
+<% end %>
 </div>
