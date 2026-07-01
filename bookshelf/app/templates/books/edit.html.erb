@@ -7,6 +7,6 @@
 <br>
 
 <div>
-  <%= link_to "Show this book", book %> |
+  <%= link_to "Show this book", routes.path(:book, id: book.id) %> |
   <%= link_to "Back to books", routes.path(:books) %>
 </div>
