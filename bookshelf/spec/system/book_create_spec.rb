@@ -6,6 +6,9 @@ RSpec.describe "books/new", type: :system do
       visit "/books/new"
 
       fill_in "Title", with: "awesome book"
+      click_on "Create Book"
+      expect(page).to have_content("prohibited this book from being saved")
+      expect(page).to have_content("Author: must be filled")
       fill_in "Author", with: "Jane Doe"
 
       click_on "Create Book"
