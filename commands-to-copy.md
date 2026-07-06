@@ -695,9 +695,7 @@
 
 1. There is an example in the [Hanami docs for updating a Book](https://hanakai.org/learn/hanami/v2.3/getting-started/building-a-web-app#updating-a-book)
 
-1. The create and edit display the same form and take almost all the same parameters in the actions.
-
-1. You can expose the book submit wording, method and path in the update view **views/edit.rb** with code like
+1. The new and edit templates display the same form template.  You can expose the book submit wording, form method and form path in the update view **views/edit.rb** with code like
    ```
    include Deps["repos.book_repo"]
 
@@ -729,12 +727,15 @@
    <%= form_for :book, form_path, method: form_method do |form| %>
    ```
 
+1. The create and update actions take almost all the same parameters. You may want to make a copy of create to start with for update.
+
 1. the update action will need both the id and the parameters from the create
    ```
    params do
       required(:id).filled(:integer)
       ...
    end 
+   ```
 
 1. you can update the book by calling something like
    ```
