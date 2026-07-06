@@ -120,7 +120,7 @@
 
 1. docker exec -w /usr/src/app/bookshelf -it 
 
-#### working database connection
+#### Working Database Connection
 
 1. check out the completed code branch
    ```
@@ -161,7 +161,7 @@
    ls bookshelf/app/templates/books
    ```
 
-#### working routes and actions
+#### Working Routes and Actions
 
 1. check out the completed code branch
    ```
@@ -261,7 +261,7 @@
 
 1. We no longer have syntax errors in our specs...  They are now running and telling us our code is not yet working!
 
-#### working specs
+#### Working Specs
 
 1. check out the completed code branch
    ```
@@ -294,7 +294,7 @@
    ```
 
 
-#### working flash notices
+#### Working Flash Notices
 
 1. check out the completed code branch
    ```
@@ -500,6 +500,8 @@
 
 1. Look at the [index page in the application](http://localhost:2301/books)
 
+   If there server has an error
+   
    1. Compile the assets
       ```
       docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec hanami assets compile
