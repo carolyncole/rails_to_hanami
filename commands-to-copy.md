@@ -313,15 +313,6 @@
    docker exec -w /usr/src/app/bookshelf -it rails2hanami bundle exec rspec spec/system/book_show_spec.rb
    ```
 
-1. Replace in bookshelf/app/templates/books/show.html.erb
-   ```
-   <%= render book %>
-   ```
-   With 
-   ```
-   <%= render "book", book: book %>
-   ```
-
 1. Add to **bookshelf/app/views/books/show.rb**
    ```
    include Deps["repos.book_repo"]
@@ -329,6 +320,15 @@
    expose :book do |id:|
      book_repo.get(id)
    end
+   ```
+
+1. Replace in bookshelf/app/templates/books/show.html.erb
+   ```
+   <%= render book %>
+   ```
+   With 
+   ```
+   <%= render "book", book: book %>
    ```
 
 1. Create a Book struct
