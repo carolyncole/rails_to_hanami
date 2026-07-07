@@ -40,3 +40,9 @@ remove the built docker container
 ```
 docker rm rails2hanami
 ```
+
+#### Clean Up (this is destructive)
+Clean up docker completely to start entirely over.  This will impact your entire docker setup
+```
+docker system prune -a
+```
