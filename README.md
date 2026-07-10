@@ -4,7 +4,7 @@ Backing code for a workshop in how to convert a Rails application over to a Hana
 ## Dependencies
 This workshop depends on having a docker engine on your machine.  You can install docker locally by [downloading the appropriate installer.](https://docs.docker.com/desktop/#next-steps) 
 
-## Setup docker container
+## Setup Docker Container
 
 Build the docker image by running 
 ```
@@ -16,7 +16,7 @@ Start a container using the new image by running
 docker run -it --name rails2hanami --publish 3001:3000 --publish 2301:2300 --volume .:/usr/src/app rails2hanami
 ```
 
-### Testing container
+### Testing the Container
 
 To make sure your container is setup correctly run.  All examples should pass.
 ```
@@ -24,7 +24,7 @@ docker exec -it rails2hanami bundle exec rails db:migrate
 docker exec -it rails2hanami bundle exec rspec
 ```
 
-### Additional commands
+## Additional Docker Commands
 
 restart the container by running
 ```
