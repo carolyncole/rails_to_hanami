@@ -118,8 +118,6 @@
    exit
    ```
 
-1. docker exec -w /usr/src/app/bookshelf -it 
-
 #### Working Database Connection
 
 1. check out the completed code branch
